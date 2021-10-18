@@ -1,0 +1,42 @@
+# output dir
+outputs
+experiments
+instant_test_output
+inference_test_output
+detectron2
+
+*.jpg
+*.png
+*.txt
+*.mp4
+
+# compilation and distribution
+__pycache__
+_ext
+*.pyc
+*.so
+build/
+dist/
+datasets/
+*egg-info/**
+
+# pytorch/python/numpy formats
+*.pth
+*.pkl
+*.npy
+
+# ipython/jupyter notebooks
+*.ipynb
+**/.ipynb_checkpoints/
+
+# Editor temporaries
+*.swn
+*.swo
+*.swp
+*~
+
+# Pycharm editor settings
+.idea
+
+# VS code
+.vscode
