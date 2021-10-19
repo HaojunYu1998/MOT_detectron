@@ -148,8 +148,8 @@ def build_yolopafpn_backbone(cfg, input_shape: ShapeSpec):
         backbone (Backbone): backbone module, must be a subclass of :class:`Backbone`.
     """
     bottom_up = build_scpdarknet_backbone(cfg, input_shape)
-    depth_mul = cfg.MODEL.SCPDARKNET.DEPTH_MUL
-    width_mul = cfg.MODEL.SCPDARKNET.WIDTH_MUL
+    depth = cfg.MODEL.YOLOX.DEPTH
+    width = cfg.MODEL.YOLOX.WIDTH
     in_features = cfg.MODEL.YOLOPAFPN.IN_FEATURES
     out_features = cfg.MODEL.YOLOPAFPN.OUT_FEATURES
     in_channels = cfg.MODEL.YOLOPAFPN.IN_CHANNELS
@@ -157,8 +157,8 @@ def build_yolopafpn_backbone(cfg, input_shape: ShapeSpec):
 
     backbone = YOLOPAFPN(
         bottom_up=bottom_up,
-        depth=depth_mul,
-        width=width_mul,
+        depth=depth,
+        width=width,
         in_features=in_features,
         out_features=out_features,
         in_channels=in_channels,

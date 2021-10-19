@@ -25,7 +25,7 @@ class YOLOXHead(nn.Module):
         super().__init__()
 
         act = "relu" # "silu"
-        width = cfg.MODEL.ROI_YOLO_HEAD.WIDTH
+        width = cfg.MODEL.YOLOX.WIDTH
         strides = cfg.MODEL.ROI_YOLO_HEAD.STRIDES
         depthwise = cfg.MODEL.ROI_YOLO_HEAD.DEPTHWISE
         

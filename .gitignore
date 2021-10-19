@@ -4,6 +4,7 @@ experiments
 instant_test_output
 inference_test_output
 detectron2
+pretrained_models
 
 *.jpg
 *.png

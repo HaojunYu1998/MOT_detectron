@@ -12,9 +12,12 @@ from .yolo_pafpn import YOLOPAFPN
 
 from detectron2.modeling import build_roi_heads, build_backbone, META_ARCH_REGISTRY
 from detectron2.layers import batched_nms
-from detectron2.structures import Instances, Boxes
+from detectron2.structures import Instances, Boxes, pairwise_iou
+from detectron2.modeling.postprocessing import detector_postprocess
 
 from .utils import imagelist_from_tensors, box_cxcywh_to_xyxy, box_xyxy_to_cxcywh
+
+DEBUG = True
 
 
 @META_ARCH_REGISTRY.register()
@@ -38,6 +41,11 @@ class YOLOX(nn.Module):
             "pixel_std", torch.Tensor(cfg.MODEL.PIXEL_STD).view(-1, 1, 1)
         )
         self.nms_thresh = cfg.MODEL.ROI_HEADS.NMS_THRESH_TEST
+
+        for m in self.modules():
+            if isinstance(m, nn.BatchNorm2d):
+                m.eps = 1e-3
+                m.momentum = 0.03
 
         self.to(self.device)
 
@@ -70,8 +78,14 @@ class YOLOX(nn.Module):
                 "l1_loss": l1_loss
             }
         else:
+            # gt_instances = batched_inputs[0]["instances"].to(self.device)
             outputs = self.head(fpn_outs)
             outputs = self.postprocess(outputs, images.image_sizes)
+            # anno_boxes = gt_instances.gt_boxes
+            # pred_boxes = outputs[0]["instances"].pred_boxes
+            # iou_mat = pairwise_iou(pred_boxes, anno_boxes)
+            # det_anno_mask = (iou_mat > 0.9).any(dim=0)
+            # print(int(det_anno_mask.sum()), len(det_anno_mask), len(pred_boxes))
 
         return outputs
 
@@ -85,7 +99,7 @@ class YOLOX(nn.Module):
         targets = torch.zeros(len(num_gt_per_img), max_gt_per_img, 5).to(self.device)
         for i in range(len(gt_instances)):
             gt_boxes = gt_instances[i].gt_boxes.tensor
-            gt_boxes = box_xyxy_to_cxcywh(gt_boxes)
+            gt_boxes = box_xyxy_to_cxcywh(gt_boxes).reshape(-1, 4)
             target = torch.cat([gt_instances[i].gt_classes.reshape(-1, 1), gt_boxes], dim=-1)
             targets[i, :num_gt_per_img[i], ...] = target
         return targets
@@ -104,20 +118,36 @@ class YOLOX(nn.Module):
         results = []
         for output, image_size in zip(outputs, image_sizes):
             output = output.reshape(-1, output.shape[-1])
-            output = output[output[..., 4].topk(100).indices]
+            output = output[output[..., 4].topk(1000).indices]
             # NMS
             scores = output[..., 4]
             boxes = box_cxcywh_to_xyxy(output[..., :4])
-            idxs = torch.zeros_like(scores)
-            keep = batched_nms(boxes, scores, idxs, iou_threshold=self.nms_thresh)
-            scores = scores[keep].reshape(-1)
-            boxes = boxes[keep].reshape(-1, 4)
             idxs = torch.zeros_like(scores).long() + 1
+            # keep = batched_nms(boxes, scores, idxs, iou_threshold=self.nms_thresh)
+            # scores = scores[keep].reshape(-1)
+            # boxes = boxes[keep].reshape(-1, 4)
+            # idxs = torch.zeros_like(scores).long() + 1
             # Instances
+            # if DEBUG:
+            #     if image_size[0] == 1080:
+            #         image_size = (750, 1333)
+            #     elif image_size[0] == 480:
+            #         image_size = (800, 1067)
+            #     else:
+            #         print(image_size)
             output = Instances(image_size)
             output.pred_boxes = Boxes(boxes)
             output.scores = scores
             output.pred_classes = idxs
+            # if DEBUG:
+            #     if output.image_size[0] == 750:
+            #         # output.image_size = (750, 1333)
+            #         output = detector_postprocess(output, 1080, 1920)
+            #     elif output.image_size[0] == 800:
+            #         # output._image_size = (800, 1067)
+            #         output = detector_postprocess(output, 480, 640)
+            # h=1080, w=1920, new_h=750, new_w=1333
+            # h=480, w=640, new_h=800, new_w=1067
             results.append({"instances": output})
         return results
 

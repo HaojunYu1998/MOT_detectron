@@ -1,5 +1,5 @@
 MODEL:
-  WEIGHTS: "pretrained_models/yolox_nano.pth"
+  WEIGHTS: "pretrained_models/yolox_x.pth"
   PIXEL_MEAN: [123.675, 116.280, 103.530]
   PIXEL_STD: [58.395, 57.120, 57.375]
   META_ARCHITECTURE: "YOLOX"
@@ -8,8 +8,8 @@ MODEL:
   ROI_HEADS:
     NAME: "YOLOXHead"
   YOLOX:
-    DEPTH: 1.0
-    WIDTH: 1.0
+    DEPTH: 1.33
+    WIDTH: 1.25
   SCPDARKNET:
     OUT_FEATURES: ["dark3", "dark4", "dark5"]
     DEPTHWISE: True

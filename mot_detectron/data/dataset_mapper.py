@@ -9,6 +9,8 @@ from detectron2.data import transforms as d2trans
 from detectron2.data.common import DatasetFromList, MapDataset
 
 
+DEBUG = True
+
 class COCO_Style_DataMapper:
     """
     A callable which takes a dataset dict in Ultrasound Dataset format,
@@ -34,8 +36,9 @@ class COCO_Style_DataMapper:
         image = d2utils.read_image(dataset_dict["file_name"], format=self.img_format)
         d2utils.check_image_size(dataset_dict, image)
 
-        aug_input = d2trans.StandardAugInput(image)
-        transforms = aug_input.apply_augmentations(self.augmentations)
+        # if DEBUG:
+        #     aug_input = d2trans.StandardAugInput(image)
+        #     transforms = aug_input.apply_augmentations(self.augmentations)
         
         image_shape = image.shape[:2]
 
@@ -43,22 +46,23 @@ class COCO_Style_DataMapper:
             np.ascontiguousarray(image.transpose(2, 0, 1).astype("float32"))
         )
 
-        if not self.is_train:
-            for i in range(len(dataset_dict)):
-                dataset_dict.pop("annotations", None)
-            return dataset_dict
+        # if not self.is_train:
+        #     for i in range(len(dataset_dict)):
+        #         dataset_dict.pop("annotations", None)
+        #     return dataset_dict
 
-        has_annotation = "annotations" in  dataset_dict
         if self.is_train:
-            assert has_annotation
+            assert "annotations" in  dataset_dict
         # Apply transform to annotations
         if has_annotation:
-            annos = [
-                d2utils.transform_instance_annotations(
-                    obj, transforms, image_shape,
-                )
-                for obj in dataset_dict.pop("annotations")
-            ]
+            annos = dataset_dict["annotations"]
+            # if DEBUG:
+            #     annos = [
+            #         d2utils.transform_instance_annotations(
+            #             obj, transforms, image_shape,
+            #         )
+            #         for obj in dataset_dict["annotations"]
+            #     ]
             instances = d2utils.annotations_to_instances(annos, image_shape)
             dataset_dict["instances"] = d2utils.filter_empty_instances(instances)
 

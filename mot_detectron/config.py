@@ -5,7 +5,9 @@ def add_yolo_config(cfg):
     """
     Add config for DeFCN
     """
-    cfg.MODEL.YOLO = CN()
+    cfg.MODEL.YOLOX = CN()
+    cfg.MODEL.YOLOX.DEPTH = 0.33
+    cfg.MODEL.YOLOX.WIDTH = 0.25
 
     cfg.MODEL.DARKNET = CN()
     cfg.MODEL.DARKNET.DEPTH = 21 # or 53
@@ -13,8 +15,6 @@ def add_yolo_config(cfg):
     cfg.MODEL.DARKNET.OUT_FEATURES = ["dark3", "dark4", "dark5"]
 
     cfg.MODEL.SCPDARKNET = CN()
-    cfg.MODEL.SCPDARKNET.DEPTH_MUL = 1.0
-    cfg.MODEL.SCPDARKNET.WIDTH_MUL = 1.0
     cfg.MODEL.SCPDARKNET.OUT_FEATURES = ["dark3", "dark4", "dark5"]
     cfg.MODEL.SCPDARKNET.DEPTHWISE = False
 
@@ -25,7 +25,6 @@ def add_yolo_config(cfg):
 
     cfg.MODEL.ROI_YOLO_HEAD = CN()
     cfg.MODEL.ROI_YOLO_HEAD.NUM_CLASSES = 1
-    cfg.MODEL.ROI_YOLO_HEAD.WIDTH = 1.0
     cfg.MODEL.ROI_YOLO_HEAD.STRIDES = [8, 16, 32]
     cfg.MODEL.ROI_YOLO_HEAD.IN_FEATURES = ["p3", "p4", "p5"]
     cfg.MODEL.ROI_YOLO_HEAD.DEPTHWISE = False
