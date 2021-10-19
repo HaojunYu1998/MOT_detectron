@@ -28,9 +28,9 @@ from detectron2.solver.build import maybe_add_gradient_clipping
 from detectron2.evaluation import COCOEvaluator
 from detectron2.data.build import build_detection_train_loader, build_detection_test_loader
 
-from yolox.config import add_yolo_config
-from yolox.modeling.utils import backup_code
-from yolox.data import COCO_Style_DataMapper
+from mot_detectron.config import add_yolo_config
+from mot_detectron.modeling.yolox.utils import backup_code
+from mot_detectron.data import COCO_Style_DataMapper
 
 
 class Trainer(DefaultTrainer):
