@@ -238,12 +238,12 @@ def build_darknet_backbone(cfg, input_shape):
 
 @BACKBONE_REGISTRY.register()
 def build_scpdarknet_backbone(cfg, input_shape):
-    depth_mul = cfg.MODEL.SCPDARKNET.DEPTH_MUL
-    width_mul = cfg.MODEL.SCPDARKNET.WIDTH_MUL
+    depth_mul = cfg.MODEL.YOLOX.DEPTH
+    width_mul = cfg.MODEL.YOLOX.WIDTH
     base_depth = max(round(depth_mul * 3), 1)  # 3
     base_channels = int(width_mul * 64)  # 64
     out_features = cfg.MODEL.SCPDARKNET.OUT_FEATURES
-    depthwise = cfg.MODEL.SCPDARKNET.DEPTHWISE
+    depthwise = cfg.MODEL.YOLOX.DEPTHWISE
     
     return CSPDarknet(
         in_channels=input_shape.channels,
@@ -251,6 +251,6 @@ def build_scpdarknet_backbone(cfg, input_shape):
         base_channels=base_channels,
         out_features=out_features,
         depthwise=depthwise,
-        act="relu"# "silu"
+        act="silu"
     )
         

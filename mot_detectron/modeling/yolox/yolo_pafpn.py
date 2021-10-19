@@ -153,7 +153,7 @@ def build_yolopafpn_backbone(cfg, input_shape: ShapeSpec):
     in_features = cfg.MODEL.YOLOPAFPN.IN_FEATURES
     out_features = cfg.MODEL.YOLOPAFPN.OUT_FEATURES
     in_channels = cfg.MODEL.YOLOPAFPN.IN_CHANNELS
-    depthwise = cfg.MODEL.SCPDARKNET.DEPTHWISE
+    depthwise = cfg.MODEL.YOLOX.DEPTHWISE
 
     backbone = YOLOPAFPN(
         bottom_up=bottom_up,
@@ -163,6 +163,6 @@ def build_yolopafpn_backbone(cfg, input_shape: ShapeSpec):
         out_features=out_features,
         in_channels=in_channels,
         depthwise=depthwise,
-        act="relu"# "silu",
+        act="silu",
     )
     return backbone

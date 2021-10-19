@@ -24,14 +24,14 @@ class YOLOXHead(nn.Module):
     def __init__(self, cfg, input_shape):
         super().__init__()
 
-        act = "relu" # "silu"
+        act = "silu"
         width = cfg.MODEL.YOLOX.WIDTH
         strides = cfg.MODEL.ROI_YOLO_HEAD.STRIDES
-        depthwise = cfg.MODEL.ROI_YOLO_HEAD.DEPTHWISE
+        depthwise = cfg.MODEL.YOLOX.DEPTHWISE
         
         self.n_anchors = 1
         # background is the additional class
-        self.num_classes = cfg.MODEL.ROI_YOLO_HEAD.NUM_CLASSES
+        self.num_classes = cfg.MODEL.YOLOX.NUM_CLASSES
         self.in_features = cfg.MODEL.ROI_YOLO_HEAD.IN_FEATURES
         in_channels = [input_shape[f].channels for f in self.in_features]
         self.decode_in_inference = True  # for deploy, set to False

@@ -10,18 +10,17 @@ MODEL:
   YOLOX:
     DEPTH: 0.33
     WIDTH: 0.25
+    DEPTHWISE: False
+    NUM_CLASSES: 1
   SCPDARKNET:
     OUT_FEATURES: ["dark3", "dark4", "dark5"]
-    DEPTHWISE: True
   YOLOPAFPN:
     IN_FEATURES: ["dark3", "dark4", "dark5"]
     IN_CHANNELS: [256, 512, 1024]
     OUT_FEATURES: ["p3", "p4", "p5"]
   ROI_YOLO_HEAD:
-    NUM_CLASSES: 1
     STRIDES: [8, 16, 32]
     IN_FEATURES: ["p3", "p4", "p5"]
-    DEPTHWISE: True
 DATASETS:
   TRAIN: ("MOT17_train",)
   TEST: ("MOT17_val",)
